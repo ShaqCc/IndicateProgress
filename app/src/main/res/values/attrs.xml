@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="IndicateProgress">
+        <attr name="IndicateBackground" format="color"/>
+        <attr name="IndicateTextSize" format="integer"/>
+        <attr name="IndicateTextColor" format="color"/>
+    </declare-styleable>
+</resources>
