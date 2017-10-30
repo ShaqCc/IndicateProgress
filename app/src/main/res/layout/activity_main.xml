@@ -6,11 +6,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
     tools:context="com.bayin.indicateprogress.MainActivity">
 
     <com.bayin.indicateprogress.lib.IndicateProgress
         android:id="@+id/indicateProgress"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:text="Hello World!"
         app:IndicateTextColor="@color/primary_text"
@@ -38,4 +42,105 @@
         android:layout_height="wrap_content"
         android:text="Done"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="直角path方向："/>
+        <RadioGroup
+            android:id="@+id/radiogroup_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/path_1_cw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CW"/>
+            <RadioButton
+                android:id="@+id/path_1_ccw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CCW"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="17dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="圆角path方向："/>
+        <RadioGroup
+            android:id="@+id/radiogroup_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/path_2_cw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CW"/>
+            <RadioButton
+                android:id="@+id/path_2_ccw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CCW"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="17dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paht的FillType："/>
+        <RadioGroup
+            android:id="@+id/radiogroup_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/path_style_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WINDING"/>
+            <RadioButton
+                android:id="@+id/path_style_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INVERSE_WINDING"/>
+            <RadioButton
+                android:id="@+id/path_style_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EVEN_ODD"/>
+            <RadioButton
+                android:id="@+id/path_style_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INVERSE_EVEN_ODD"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <Button
+        android:onClick="restart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="启动"/>
 </LinearLayout>

@@ -136,6 +136,7 @@ public class IndicateProgress extends View {
         mPath = new Path();
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -166,16 +167,27 @@ public class IndicateProgress extends View {
         //添加实心矩形path
         float progress = Utils.div(mProgress, mTotal);
         float rectWidth = progress * mViewWidth;
-        Log.d(TAG,"矩形宽度："+rectWidth);
-        mPath.addRect(0, 0, rectWidth, mViewHeight,Path.Direction.CCW);
-        mPath.setFillType(Path.FillType.EVEN_ODD);
+        Log.d(TAG, "矩形宽度：" + rectWidth);
+        mPath.addRect(0, 0, rectWidth, mViewHeight, path_1_Direction);
+        mPath.addRoundRect(0, 0, rectWidth, mViewHeight, 16, 16, path_2_Direction);
+        mPath.setFillType(path_type);
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         canvas.drawPath(mPath, mBackgroundPaint);
+    }
+
+    private Path.Direction path_1_Direction = Path.Direction.CW;
+    private Path.Direction path_2_Direction = Path.Direction.CW;
+    private Path.FillType path_type = Path.FillType.WINDING;
+
+    public void setPathType(Path.Direction direction1, Path.Direction direction2, Path.FillType type) {
+        this.path_1_Direction = direction1;
+        this.path_2_Direction = direction2;
+        this.path_type = type;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(mViewWidth,mViewHeight);
+        setMeasuredDimension(mViewWidth, mViewHeight);
     }
 }
