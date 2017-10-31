@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                     p = p + 1;
                     mIndicateProgress.setProgress(p);
                     if (p < 100)
-                        sendEmptyMessageDelayed(1, 50);
+                        sendEmptyMessageDelayed(1, 10);
                     break;
                 case 0:
                     //停止

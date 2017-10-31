@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Shader;
+import android.os.health.PackageHealthStats;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,6 +43,7 @@ public class IndicateProgress extends View {
     private int mScreenWidth;
     private int mScreenHeight;
     private int defaultHeight = 160;
+    private int corner = 30;
 
     /**
      * 按钮的风格
@@ -142,8 +147,8 @@ public class IndicateProgress extends View {
         super.onDraw(canvas);
         //画背景边框
         mBackgroundPaint.setStyle(Paint.Style.STROKE);
-        mBackgroundPaint.setStrokeWidth(2);
-        canvas.drawRoundRect(0, 0, mViewWidth, mViewHeight, 16, 16, mBackgroundPaint);
+        mBackgroundPaint.setStrokeWidth(1);
+        canvas.drawRoundRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), corner, corner, mBackgroundPaint);
         //获取文字path
         String string = "";
         switch (mState) {
@@ -162,17 +167,28 @@ public class IndicateProgress extends View {
                 break;
         }
         Log.d(TAG, "文字：" + string);
-        mTextPaint.getTextPath(string, 0, string.length(), mViewWidth / 2, mViewHeight / 2, mPath);
-//        canvas.drawText(string, 0, string.length(), mViewWidth / 2, mViewHeight / 2, mTextPaint);
+        //矫正text位置
+        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+        float offset = (fontMetrics.descent - fontMetrics.ascent) / 4;
+        mTextPaint.getTextPath(string, 0, string.length(), getMeasuredWidth() / 2, getMeasuredHeight() / 2 + offset, mPath);
         //添加实心矩形path
         float progress = Utils.div(mProgress, mTotal);
         float rectWidth = progress * mViewWidth;
+
+        //裁剪画布
+        Path path = new Path();
+        path.addRoundRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), corner, corner, path_2_Direction);
+        canvas.clipPath(path);
+
         Log.d(TAG, "矩形宽度：" + rectWidth);
-        mPath.addRect(0, 0, rectWidth, mViewHeight, path_1_Direction);
-        mPath.addRoundRect(0, 0, rectWidth, mViewHeight, 16, 16, path_2_Direction);
+        mPath.addRect(0, 0, rectWidth, getMeasuredHeight(), path_1_Direction);
+//        mPath.addRoundRect(0, 0, rectWidth, mViewHeight, 16, 16, path_2_Direction);
         mPath.setFillType(path_type);
+        mBackgroundPaint.setShader(new LinearGradient(0, getMeasuredHeight() / 2, rectWidth, getMeasuredHeight() / 2,
+                Color.parseColor("#0288D1"), Color.parseColor("#7C4DFF"), Shader.TileMode.CLAMP));
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         canvas.drawPath(mPath, mBackgroundPaint);
+
     }
 
     private Path.Direction path_1_Direction = Path.Direction.CW;
@@ -187,7 +203,8 @@ public class IndicateProgress extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(mViewWidth, mViewHeight);
+        int width = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.AT_MOST);
+        int height = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.AT_MOST);
+        super.onMeasure(width, height);
     }
 }

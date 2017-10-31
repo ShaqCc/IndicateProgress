@@ -6,16 +6,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
     tools:context="com.bayin.indicateprogress.MainActivity">
 
     <com.bayin.indicateprogress.lib.IndicateProgress
         android:id="@+id/indicateProgress"
         android:layout_width="match_parent"
         android:layout_marginTop="16dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:text="Hello World!"
         app:IndicateTextColor="@color/primary_text"
         app:IndicateBackground="@color/colorPrimaryDark"
