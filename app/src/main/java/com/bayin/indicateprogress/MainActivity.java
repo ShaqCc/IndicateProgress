@@ -17,9 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
     private IndicateProgress mIndicateProgress;
     private EditText mProgress;
-    private Path.Direction path_1_Direction = Path.Direction.CW;
-    private Path.Direction path_2_Direction = Path.Direction.CW;
-    private Path.FillType path_type = Path.FillType.WINDING;
+    private Path.Direction path_1_Direction = Path.Direction.CCW;
+    private Path.Direction path_2_Direction = Path.Direction.CCW;
+    private Path.FillType path_type = Path.FillType.EVEN_ODD;
     private int p = 0;
     private Handler mHandler = new Handler() {
         @Override
@@ -97,6 +97,19 @@ public class MainActivity extends AppCompatActivity {
                         path_type = Path.FillType.INVERSE_EVEN_ODD;
                         break;
                 }
+            }
+        });
+
+        findViewById(R.id.bt_style).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIndicateProgress.setStyle(IndicateProgress.Style.DETAIL);
+            }
+        });
+        findViewById(R.id.bt_style_default).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIndicateProgress.setStyle(IndicateProgress.Style.SIMPLE);
             }
         });
     }

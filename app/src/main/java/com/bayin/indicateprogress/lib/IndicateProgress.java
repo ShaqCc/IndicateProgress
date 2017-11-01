@@ -4,20 +4,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.health.PackageHealthStats;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.bayin.indicateprogress.DensityUtil;
 import com.bayin.indicateprogress.R;
-import com.bayin.indicateprogress.ScreenUtils;
 import com.bayin.indicateprogress.Utils;
 
 /****************************************
@@ -26,7 +23,7 @@ import com.bayin.indicateprogress.Utils;
  * Author: Created by bayin on 2017/10/27.
  ****************************************/
 
-public class IndicateProgress extends View {
+public class IndicateProgress extends View implements View.OnClickListener {
     private final static String TAG = "IndicateProgress";
     private int mBackgroundColor;
     private int mTextSize;
@@ -34,29 +31,45 @@ public class IndicateProgress extends View {
     private int mProgress;
     private int mTotal = 100;
     private Style mStyle = Style.SIMPLE;
-    private State mState = State.START;
+    private State mState = State.PREPARE;
     private Paint mTextPaint;
     private Paint mBackgroundPaint;
     private Path mPath;
-    private int mViewWidth;
-    private int mViewHeight;
     private int mScreenWidth;
-    private int mScreenHeight;
     private int defaultHeight = 160;
     private int corner = 30;
+    private RectF mStrokeRect;
+    private int mStrokeWidth = 2;
+
+    @Override
+    public void onClick(View v) {
+        switch (mState) {
+            case PREPARE:
+                //开启动画
+
+                break;
+            case DOWNLOADING:
+
+                break;
+            case STOP:
+                break;
+            case FINISH:
+                break;
+        }
+    }
 
     /**
      * 按钮的风格
      */
-    enum Style {
+    public enum Style {
         SIMPLE, DETAIL
     }
 
     /**
      * 按钮的三种状态
      */
-    enum State {
-        START, DOWNLOADING, CONTINUE;
+   public enum State {
+        PREPARE, DOWNLOADING, STOP, FINISH
     }
 
     public int getBackgroundColor() {
@@ -92,6 +105,24 @@ public class IndicateProgress extends View {
         invalidate();
     }
 
+    public void setStyle(Style style) {
+        this.mStyle = style;
+        invalidate();
+    }
+
+    public Style getStyle() {
+        return mStyle;
+    }
+
+    public void setState(State state) {
+        this.mState = state;
+        invalidate();
+    }
+
+    public State getState() {
+        return mState;
+    }
+
     public int getTotal() {
         return mTotal;
     }
@@ -115,13 +146,6 @@ public class IndicateProgress extends View {
         mTextSize = att.getInt(R.styleable.IndicateProgress_IndicateTextSize, 60);
         mTextColor = att.getColor(R.styleable.IndicateProgress_IndicateTextColor, getResources().getColor(R.color.colorPrimaryDark));
         att.recycle();
-        //控件尺寸
-        mScreenWidth = ScreenUtils.getScreenWidth(context);
-        mScreenHeight = ScreenUtils.getScreenHeight(context);
-        String layout_width = attrs.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_width");
-        String layout_height = attrs.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_height");
-        mViewWidth = DensityUtil.dip2px(context, layout_width) < 0 ? mScreenWidth : DensityUtil.dip2px(context, layout_width);
-        mViewHeight = DensityUtil.dip2px(context, layout_height) < 0 ? defaultHeight : DensityUtil.dip2px(context, layout_height);
         //初始化
         initialize();
     }
@@ -139,6 +163,8 @@ public class IndicateProgress extends View {
         mBackgroundPaint.setAntiAlias(true);
 
         mPath = new Path();
+
+        setOnClickListener(this);
     }
 
 
@@ -147,15 +173,19 @@ public class IndicateProgress extends View {
         super.onDraw(canvas);
         //画背景边框
         mBackgroundPaint.setStyle(Paint.Style.STROKE);
-        mBackgroundPaint.setStrokeWidth(1);
-        canvas.drawRoundRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), corner, corner, mBackgroundPaint);
+        mBackgroundPaint.setStrokeWidth(mStrokeWidth);
+        if (mStrokeRect == null) {
+            //背景线框矩形
+            mStrokeRect = new RectF(mStrokeWidth, mStrokeWidth, getMeasuredWidth() - mStrokeWidth, getMeasuredHeight() - mStrokeWidth);
+        }
+        canvas.drawRoundRect(mStrokeRect, corner, corner, mBackgroundPaint);
         //获取文字path
         String string = "";
         switch (mState) {
-            case START:
+            case PREPARE:
                 string = getResources().getString(R.string.start_download);
                 break;
-            case CONTINUE:
+            case STOP:
                 string = getResources().getString(R.string.stop_download);
                 break;
             case DOWNLOADING:
@@ -173,32 +203,34 @@ public class IndicateProgress extends View {
         mTextPaint.getTextPath(string, 0, string.length(), getMeasuredWidth() / 2, getMeasuredHeight() / 2 + offset, mPath);
         //添加实心矩形path
         float progress = Utils.div(mProgress, mTotal);
-        float rectWidth = progress * mViewWidth;
+        float rectWidth = progress * getMeasuredWidth();
 
         //裁剪画布
         Path path = new Path();
-        path.addRoundRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), corner, corner, path_2_Direction);
-        canvas.clipPath(path);
+        path.addRoundRect(new RectF(0, 0, getMeasuredWidth(), getMeasuredHeight()), corner, corner, path_2_Direction);
 
+        canvas.clipPath(path);
         Log.d(TAG, "矩形宽度：" + rectWidth);
         mPath.addRect(0, 0, rectWidth, getMeasuredHeight(), path_1_Direction);
-//        mPath.addRoundRect(0, 0, rectWidth, mViewHeight, 16, 16, path_2_Direction);
         mPath.setFillType(path_type);
         mBackgroundPaint.setShader(new LinearGradient(0, getMeasuredHeight() / 2, rectWidth, getMeasuredHeight() / 2,
                 Color.parseColor("#0288D1"), Color.parseColor("#7C4DFF"), Shader.TileMode.CLAMP));
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         canvas.drawPath(mPath, mBackgroundPaint);
-
     }
 
-    private Path.Direction path_1_Direction = Path.Direction.CW;
-    private Path.Direction path_2_Direction = Path.Direction.CW;
-    private Path.FillType path_type = Path.FillType.WINDING;
+    private Path.Direction path_1_Direction = Path.Direction.CCW;
+    private Path.Direction path_2_Direction = Path.Direction.CCW;
+    private Path.FillType path_type = Path.FillType.EVEN_ODD;
 
     public void setPathType(Path.Direction direction1, Path.Direction direction2, Path.FillType type) {
         this.path_1_Direction = direction1;
         this.path_2_Direction = direction2;
         this.path_type = type;
+    }
+
+    public void stop(){
+        setState(State.STOP);
     }
 
     @Override

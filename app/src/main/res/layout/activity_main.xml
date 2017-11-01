@@ -36,12 +36,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    <Button
-        android:id="@+id/bt_set"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Done"
-        />
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bt_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            />
+        <Button
+            android:id="@+id/bt_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="详细"
+            />
+        <Button
+            android:id="@+id/bt_style_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="默认"
+            />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
