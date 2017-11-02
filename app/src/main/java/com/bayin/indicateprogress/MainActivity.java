@@ -1,5 +1,6 @@
 package com.bayin.indicateprogress;
 
+import android.annotation.SuppressLint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.bayin.indicateprogress.lib.IndicateProgress;
 
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private Path.Direction path_2_Direction = Path.Direction.CCW;
     private Path.FillType path_type = Path.FillType.EVEN_ODD;
     private int p = 0;
+    private boolean pause = false;
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     //开始
                     p = p + 1;
                     mIndicateProgress.setProgress(p);
-                    if (p < 100)
+                    if (p < 100 && !pause)
                         sendEmptyMessageDelayed(1, 10);
                     break;
                 case 0:
@@ -46,6 +50,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mIndicateProgress = (IndicateProgress) findViewById(R.id.indicateProgress);
         mProgress = (EditText) findViewById(R.id.et_progress);
+
+        mIndicateProgress.setOnButtonStateChangeListener(new IndicateProgress.OnButtonStateChangeListener() {
+            @Override
+            public void onStart() {
+                Toast.makeText(MainActivity.this, "start", Toast.LENGTH_SHORT).show();
+                pause = false;
+                p = 0;
+                mHandler.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onStop() {
+                Toast.makeText(MainActivity.this, "停", Toast.LENGTH_SHORT).show();
+                pause = true;
+            }
+
+            @Override
+            public void onRestart() {
+                Toast.makeText(MainActivity.this, "继续下载", Toast.LENGTH_SHORT).show();
+                pause = false;
+                mHandler.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void onFinish() {
+                Toast.makeText(MainActivity.this, "完成", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         findViewById(R.id.bt_set).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

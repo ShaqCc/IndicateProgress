@@ -40,22 +40,42 @@ public class IndicateProgress extends View implements View.OnClickListener {
     private int corner = 30;
     private RectF mStrokeRect;
     private int mStrokeWidth = 2;
+    private OnButtonStateChangeListener mOnButtonStateChangeListener;
 
     @Override
     public void onClick(View v) {
         switch (mState) {
             case PREPARE:
-                //开启动画
-
+                setState(State.DOWNLOADING);
+                if (mOnButtonStateChangeListener != null) mOnButtonStateChangeListener.onStart();
                 break;
             case DOWNLOADING:
-
+                setState(State.STOP);
+                if (mOnButtonStateChangeListener != null) mOnButtonStateChangeListener.onStop();
                 break;
             case STOP:
+                setState(State.DOWNLOADING);
+                if (mOnButtonStateChangeListener != null) mOnButtonStateChangeListener.onRestart();
                 break;
             case FINISH:
+                setState(State.FINISH);
+                if (mOnButtonStateChangeListener != null) mOnButtonStateChangeListener.onFinish();
                 break;
         }
+    }
+
+    public void setOnButtonStateChangeListener(OnButtonStateChangeListener listener) {
+        this.mOnButtonStateChangeListener = listener;
+    }
+
+    public interface OnButtonStateChangeListener {
+        void onStart();
+
+        void onStop();
+
+        void onRestart();
+
+        void onFinish();
     }
 
     /**
@@ -68,7 +88,7 @@ public class IndicateProgress extends View implements View.OnClickListener {
     /**
      * 按钮的三种状态
      */
-   public enum State {
+    public enum State {
         PREPARE, DOWNLOADING, STOP, FINISH
     }
 
@@ -102,6 +122,7 @@ public class IndicateProgress extends View implements View.OnClickListener {
 
     public void setProgress(int progress) {
         mProgress = progress;
+        if (mProgress == getTotal()) setState(State.FINISH);
         invalidate();
     }
 
@@ -116,6 +137,8 @@ public class IndicateProgress extends View implements View.OnClickListener {
 
     public void setState(State state) {
         this.mState = state;
+        if (state == State.FINISH && mOnButtonStateChangeListener != null)
+            mOnButtonStateChangeListener.onFinish();
         invalidate();
     }
 
@@ -186,14 +209,17 @@ public class IndicateProgress extends View implements View.OnClickListener {
                 string = getResources().getString(R.string.start_download);
                 break;
             case STOP:
-                string = getResources().getString(R.string.stop_download);
+                string = getResources().getString(R.string.continue_download);
                 break;
             case DOWNLOADING:
-                if (mStyle == Style.DETAIL) {
-                    string = getResources().getString(R.string.continue_download);
+                if (mStyle == Style.SIMPLE) {
+                    string = getResources().getString(R.string.stop_download);
                 } else {
                     string = getProgress() + "/" + mTotal;
                 }
+                break;
+            case FINISH:
+                string = "下载完成";
                 break;
         }
         Log.d(TAG, "文字：" + string);
@@ -229,7 +255,7 @@ public class IndicateProgress extends View implements View.OnClickListener {
         this.path_type = type;
     }
 
-    public void stop(){
+    public void stop() {
         setState(State.STOP);
     }
 

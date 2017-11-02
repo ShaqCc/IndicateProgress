@@ -3,4 +3,8 @@
     <string name="start_download">下载</string>
     <string name="continue_download">继续</string>
     <string name="stop_download">暂停</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">发现</string>
+    <string name="title_notifications">通知</string>
 </resources>
