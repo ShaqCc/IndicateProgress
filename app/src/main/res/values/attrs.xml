@@ -5,4 +5,8 @@
         <attr name="IndicateTextSize" format="integer"/>
         <attr name="IndicateTextColor" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="OvalProgressView">
+        <attr name="ovalproress_radius" format="integer"/>
+    </declare-styleable>
 </resources>
